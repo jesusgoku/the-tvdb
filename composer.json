@@ -1,0 +1,20 @@
+{
+    "name": "jesusgoku/thetvdb",
+    "description": "PHP library for consume TheTVDB XML API",
+    "authors": [
+        {
+            "name": "Jesus Urrutia",
+            "email": "jesus.urrutia@gmail.com",
+            "homepage": "http://jesusurrutia.com"
+        }
+    ],
+    "require": {
+      "php": ">=5.4.0",
+        "guzzlehttp/guzzle": "5.3.*"
+    },
+    "autoload": {
+        "psr-0": {
+            "": "src/"
+        }
+    }
+}
