@@ -1,6 +1,6 @@
 <?php
 
-namespace JesusGoku\TheTvDb;
+namespace JesusGoku\TheTvDb\Models;
 
 /**
  * Class Language
@@ -8,7 +8,7 @@ namespace JesusGoku\TheTvDb;
  *
  * @author Jesus Urrutia <jesus.urrutia@gmail.com>
  */
-class Language
+class Language extends AbstractModel
 {
     /** @var string */
     private $id;

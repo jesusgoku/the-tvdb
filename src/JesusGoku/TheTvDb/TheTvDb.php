@@ -3,7 +3,11 @@
 namespace JesusGoku\TheTvDb;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
+use JesusGoku\TheTvDb\Models\Actor;
+use JesusGoku\TheTvDb\Models\Banner;
+use JesusGoku\TheTvDb\Models\Episode;
+use JesusGoku\TheTvDb\Models\Language;
+use JesusGoku\TheTvDb\Models\TvShow;
 
 /**
  * Class TheTvDb

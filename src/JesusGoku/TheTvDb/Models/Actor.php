@@ -1,6 +1,6 @@
 <?php
 
-namespace JesusGoku\TheTvDb;
+namespace JesusGoku\TheTvDb\Models;
 
 
 /**
@@ -9,7 +9,7 @@ namespace JesusGoku\TheTvDb;
  *
  * @author Jesus Urrutia <jesus.urrutia@gmail.com>
  */
-class Actor
+class Actor extends AbstractModel
 {
     /** @var int */
     private $id;

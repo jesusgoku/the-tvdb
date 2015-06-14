@@ -1,6 +1,6 @@
 <?php
 
-namespace JesusGoku\TheTvDb;
+namespace JesusGoku\TheTvDb\Models;
 
 
 /**
@@ -9,9 +9,9 @@ namespace JesusGoku\TheTvDb;
  *
  * @author Jesus Urrutia <jesus.urrutia@gmail.com>
  */
-class TvShow
+class TvShow extends AbstractModel
 {
-    /** @var string */
+    /** @var int */
     private $id;
 
     /** @var string */
@@ -70,7 +70,7 @@ class TvShow
 
     public function __construct(\SimpleXMLElement $data)
     {
-        $this->id = (string) $data->seriesid;
+        $this->id = (int) $data->id;
         $this->name = (string) $data->SeriesName;
         $this->overview = (string) $data->Overview;
         $this->firstAired = new \DateTime((string) $data->FirstAired);
@@ -95,7 +95,7 @@ class TvShow
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getId()
     {
@@ -103,7 +103,7 @@ class TvShow
     }
 
     /**
-     * @param string $id
+     * @param int $id
      *
      * @return $this
      */
