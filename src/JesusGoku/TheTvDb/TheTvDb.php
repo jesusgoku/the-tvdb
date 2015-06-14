@@ -144,4 +144,20 @@ class TheTvDb
 
         return $actors;
     }
+
+    /**
+     * @param int $id
+     * @param int $season
+     * @param int $episode
+     *
+     * @return Episode
+     */
+    public function getEpisode($id, $season, $episode)
+    {
+        $res = $this->authClient->get("series/{$id}/default/{$season}/{$episode}");
+
+        $xml = $res->xml();
+
+        return new Episode($xml->Episode[0]);
+    }
 }
