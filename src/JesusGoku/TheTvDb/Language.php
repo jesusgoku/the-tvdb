@@ -36,10 +36,14 @@ class Language
 
     /**
      * @param string $id
+     *
+     * @return $this
      */
     public function setId($id)
     {
         $this->id = $id;
+
+        return $this;
     }
 
     /**
@@ -52,10 +56,14 @@ class Language
 
     /**
      * @param string $name
+     *
+     * @return $this
      */
     public function setName($name)
     {
         $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -68,9 +76,13 @@ class Language
 
     /**
      * @param string $abbreviaton
+     *
+     * @return $this
      */
     public function setAbbreviaton($abbreviaton)
     {
         $this->abbreviaton = $abbreviaton;
+
+        return $this;
     }
 }
