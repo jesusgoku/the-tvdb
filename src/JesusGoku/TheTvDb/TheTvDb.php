@@ -3,6 +3,7 @@
 namespace JesusGoku\TheTvDb;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 
 /**
  * Class TheTvDb
@@ -24,6 +25,9 @@ class TheTvDb
     /** @var Client */
     private $client;
 
+    /** @var Client */
+    private $authClient;
+
     public function __construct($apiKey, array $config = array())
     {
         $this->apiKey = $apiKey;
@@ -31,22 +35,39 @@ class TheTvDb
         if (isset($config['baseUrl'])) $this->baseUrl = $config['baseUrl'];
         if (isset($config['language'])) $this->language = $config['language'];
 
-        var_dump($this->baseUrl);
         $this->client = new Client(array(
-            'base_uri' => $this->baseUrl,
+            'base_url' => $this->baseUrl,
+            'defaults' => array(
+                'headers' => array(
+                    'Accept' => 'text/xml',
+                ),
+            ),
+        ));
+
+        $this->authClient = new Client(array(
+            'base_url' => $this->baseUrl . $this->apiKey . '/',
+            'defaults' => array(
+                'headers' => array(
+                    'Accept' => 'text/xml',
+                ),
+            ),
         ));
     }
 
+    /**
+     * @param string $q
+     * @return TvShow[]
+     */
     public function search($q)
     {
-        $res = $this->client->get('http://thetvdb.com/api/GetSeries.php', array(
+        $res = $this->client->get('GetSeries.php', array(
             'query' => array(
                 'seriesname' => $q,
                 'language' => $this->language,
             ),
         ));
 
-        $xml = simplexml_load_string((string) $res->getBody());
+        $xml = $res->xml();
 
         $tvShows = array();
         foreach ($xml->Series as $serie) {
@@ -54,5 +75,19 @@ class TheTvDb
         }
 
         return $tvShows;
+    }
+
+    public function getLanguages()
+    {
+        $res = $this->authClient->get('languages.xml');
+
+        $xml = $res->xml();
+
+        $languages = array();
+        foreach ($xml->Language as $language) {
+            $languages[] = new Language($language);
+        }
+
+        return $languages;
     }
 }
