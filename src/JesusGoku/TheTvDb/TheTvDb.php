@@ -28,6 +28,10 @@ class TheTvDb
     /** @var Client */
     private $authClient;
 
+    /**
+     * @param string $apiKey
+     * @param array $config
+     */
     public function __construct($apiKey, array $config = array())
     {
         $this->apiKey = $apiKey;
@@ -77,6 +81,20 @@ class TheTvDb
         return $tvShows;
     }
 
+    public function getTvShowByImdbId($id)
+    {
+        $res = $this->client->get('GetSeriesByRemoteID.php', array(
+            'query' => array(
+                'imdbid' => $id,
+                'language' => $this->language,
+            ),
+        ));
+
+        $xml = $res->xml();
+
+        return new TvShow($xml->Series);
+    }
+
     /**
      * @return Language[]
      */
@@ -96,7 +114,7 @@ class TheTvDb
 
     public function getTvShow($id)
     {
-        $res = $this->authClient->get('series/' . $id);
+        $res = $this->authClient->get("series/{$id}/{$this->language}.xml");
 
         $xml = $res->xml();
 
@@ -146,15 +164,60 @@ class TheTvDb
     }
 
     /**
-     * @param int $id
-     * @param int $season
-     * @param int $episode
+     * @param int $episodeId
      *
      * @return Episode
      */
-    public function getEpisode($id, $season, $episode)
+    public function getEpisode($episodeId)
     {
-        $res = $this->authClient->get("series/{$id}/default/{$season}/{$episode}");
+        $res = $this->authClient->get("episodes/{$episodeId}/{$this->language}.xml");
+
+        $xml = $res->xml();
+
+        return new Episode($xml->Episode[0]);
+    }
+
+    /**
+     * @param $tvShowId
+     * @param $season
+     * @param $episode
+     *
+     * @return Episode
+     */
+    public function getEpisodeByDefault($tvShowId, $season, $episode)
+    {
+        $res = $this->authClient->get("series/{$tvShowId}/default/{$season}/{$episode}/{$this->language}.xml");
+
+        $xml = $res->xml();
+
+        return new Episode($xml->Episode[0]);
+    }
+
+    /**
+     * @param $tvShowId
+     * @param $season
+     * @param $episode
+     *
+     * @return Episode
+     */
+    public function getEpisodeByDvd($tvShowId, $season, $episode)
+    {
+        $res = $this->authClient->get("series/{$tvShowId}/dvd/{$season}/{$episode}/{$this->language}.xml");
+
+        $xml = $res->xml();
+
+        return new Episode($xml->Episode[0]);
+    }
+
+    /**
+     * @param $tvShowId
+     * @param $episode
+     *
+     * @return Episode
+     */
+    public function getEpisodeByAbsolute($tvShowId, $episode)
+    {
+        $res = $this->authClient->get("series/{$tvShowId}/absolute/{$episode}/{$this->language}.xml");
 
         $xml = $res->xml();
 
