@@ -3,3 +3,6 @@ vendor/
 
 # IDE
 .idea/
+
+# PHPUnit
+phpunit.xml
