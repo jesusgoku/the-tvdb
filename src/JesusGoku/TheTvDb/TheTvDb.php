@@ -77,6 +77,9 @@ class TheTvDb
         return $tvShows;
     }
 
+    /**
+     * @return Language[]
+     */
     public function getLanguages()
     {
         $res = $this->authClient->get('languages.xml');
@@ -89,5 +92,14 @@ class TheTvDb
         }
 
         return $languages;
+    }
+
+    public function getTvShow($id)
+    {
+        $res = $this->authClient->get('series/' . $id);
+
+        $xml = $res->xml();
+
+        return new TvShow($xml->Series[0]);
     }
 }
