@@ -102,4 +102,46 @@ class TheTvDb
 
         return new TvShow($xml->Series[0]);
     }
+
+    /**
+     * List of all the tv show banner
+     *
+     * @param int $id
+     *
+     * @return Banner[]
+     */
+    public function getBanners($id)
+    {
+        $res = $this->authClient->get('series/' . $id . '/banners.xml');
+
+        $xml = $res->xml();
+
+        $banners = array();
+        foreach ($xml->Banner as $banner) {
+            $banners[] = new Banner($banner);
+        }
+
+        return $banners;
+    }
+
+    /**
+     * List of all of the tv show actors
+     *
+     * @param int $id
+     *
+     * @return Actor[]
+     */
+    public function getActors($id)
+    {
+        $res = $this->authClient->get('series/' . $id . '/actors.xml');
+
+        $xml = $res->xml();
+
+        $actors = array();
+        foreach ($xml->Actor as $actor) {
+            $actors[] = new Actor($actor);
+        }
+
+        return $actors;
+    }
 }
