@@ -2,7 +2,12 @@
 
 namespace JesusGoku\TheTvDb;
 
+use Doctrine\Common\Cache\Cache;
+use Doctrine\Common\Cache\FilesystemCache;
 use GuzzleHttp\Client;
+use GuzzleHttp\Subscriber\Cache\CacheStorage;
+use GuzzleHttp\Subscriber\Cache\CacheStorageInterface;
+use GuzzleHttp\Subscriber\Cache\CacheSubscriber;
 use JesusGoku\TheTvDb\Models\Actor;
 use JesusGoku\TheTvDb\Models\Banner;
 use JesusGoku\TheTvDb\Models\Episode;
@@ -32,6 +37,9 @@ class TheTvDb
     /** @var Client */
     private $authClient;
 
+    /** @var CacheStorageInterface   */
+    private $cacheStorage;
+
     /**
      * @param string $apiKey
      * @param array $config
@@ -43,12 +51,15 @@ class TheTvDb
         if (isset($config['baseUrl'])) $this->baseUrl = $config['baseUrl'];
         if (isset($config['language'])) $this->language = $config['language'];
 
+        $this->cacheStorage = $this->initCacheStorage(isset($config['cache']) ? $config['cache'] : null);
+
         $this->client = new Client(array(
             'base_url' => $this->baseUrl,
             'defaults' => array(
                 'headers' => array(
                     'Accept' => 'text/xml',
                 ),
+                'debug' => true,
             ),
         ));
 
@@ -58,8 +69,39 @@ class TheTvDb
                 'headers' => array(
                     'Accept' => 'text/xml',
                 ),
+                'debug' => true,
             ),
         ));
+
+        CacheSubscriber::attach($this->client, array('storage' => $this->cacheStorage));
+        CacheSubscriber::attach($this->authClient, array('storage' => $this->cacheStorage));
+    }
+
+    /**
+     * @param CacheStorageInterface|Cache|array|bool|null $cache
+     * @return CacheStorageInterface
+     */
+    private function initCacheStorage($cache)
+    {
+        if ($cache instanceof CacheStorageInterface) {
+            return $cache;
+        } else if ($cache instanceof Cache) {
+            return new CacheStorage($cache);
+        } else if (is_array($cache) && isset($cache['folder'])) {
+            return new CacheStorage(
+                new FilesystemCache(
+                    $cache['folder'],
+                    isset($cache['prefix']) ? $cache['prefix'] : 'thetvdb-'
+                )
+            );
+        } else if (null === $cache || $cache) {
+            return new CacheStorage(
+                new FilesystemCache(sys_get_temp_dir()),
+                'thetvdb-'
+            );
+        }
+
+        throw new \InvalidArgumentException('Invalid cache config');
     }
 
     /**
